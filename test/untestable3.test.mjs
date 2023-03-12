@@ -7,10 +7,17 @@ import { parsePeopleCsv } from "../src/untestable3.mjs";
 // Yor,Forger,27,Female
 
 describe("Untestable 3: CSV file parsing", () => {
-  it("todo", async () => {
-    // TODO: write proper tests
-    try {
-      expect(await parsePeopleCsv("people.csv")).to.deep.equal([]);
-    } catch (e) {}
+
+  it("contains 3 records", async () => {
+    expect(await parsePeopleCsv("people.csv")).to.have.lengthOf(3);
   });
+  it("contains person with first name Loid", async () => {
+    let map = await parsePeopleCsv("people.csv");
+    expect(map[0]).to.have.property("firstName", "Loid");
+  });
+  it("contains person with gender", async () => {
+    let map = await parsePeopleCsv("people.csv");
+    expect(map[2]).to.have.property("gender", "f");
+  });
+
 });

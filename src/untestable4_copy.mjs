@@ -1,12 +1,7 @@
 import argon2 from "@node-rs/argon2";
 import pg from "pg";
-/*
-  * This class is hard to test because of the database connection.
-  * to make it easier to test, lets add methods to create and drop the tables we need
-  * we need to also connect to a test database instead of the production database, which could be done by managing the environment variables. 
-  * however I cant get it to work so i will just hardcode the values.
-*/
 export class PostgresUserDao {
+  
   static instance;
 
   static getInstance() {
@@ -16,17 +11,36 @@ export class PostgresUserDao {
     return this.instance;
   }
 
+  require
   db = new pg.Pool({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
+    user: "untestable",
+    host: "localhost",
+    database: "untestable",
+    password: "secret",
+    port: "5432",
   });
 
   close() {
     this.db.end();
   }
+  open() {
+    this.db.connect();
+  }
+
+  createTables() {
+    return this.db.query(
+      `create table if not exists users (
+        user_id varchar(255) primary key,
+        password_hash varchar(100) not null
+      )`
+    );
+  }
+  dropTables() {
+    return this.db.query(
+      `drop table if exists users`
+    );
+  }
+
 
   #rowToUser(row) {
     return { userId: row.user_id, passwordHash: row.password_hash };
